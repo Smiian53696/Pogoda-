@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* базові підкрутки */
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* красивий скрол */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.35);
+}
+
+/* glass helper */
+.glass {
+  @apply bg-white/5 border border-white/10 backdrop-blur-xl;
+}
+.glass-hover {
+  @apply hover:bg-white/10 hover:border-white/20 transition;
+}
+
+/* легка анімація фону */
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+.floaty {
+  animation: floaty 8s ease-in-out infinite;
+}
