@@ -7,29 +7,32 @@ import { addFavorite, removeFavorite } from '../store/favoritesSlice';
 import { type RootState } from '../store';
 import type { WeatherData, ForecastData } from '../types/weather';
 
+//Formatowanie temperatury według jednostki
 const displayTemp = (temp: number, unit: string) => {
   if (unit === 'kelvin') return `${Math.round(temp)}K`;
   if (unit === 'fahrenheit') return `${Math.round(temp)}°F`;
   return `${Math.round(temp)}°C`;
 };
 
+//Formatowanie daty prognozy
 const formatDateForForecast = (timestamp: number) => {
   const date = new Date(timestamp * 1000);
   return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 };
 
 export default function Details() {
-  const { city } = useParams();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const unit = useSelector((state: RootState) => state.settings.unit);
-  const favorites = useSelector((state: RootState) => state.favorites.list);
+  const { city } = useParams(); //miasto z URL
+  const navigate = useNavigate(); //nawigacja
+  const dispatch = useDispatch(); //Redux actions
+  const unit = useSelector((state: RootState) => state.settings.unit); // jednostka
+  const favorites = useSelector((state: RootState) => state.favorites.list); //ulubione
 
-  const [current, setCurrent] = useState<WeatherData | null>(null);
-  const [forecast, setForecast] = useState<ForecastData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [current, setCurrent] = useState<WeatherData | null>(null); //aktualna pogoda
+  const [forecast, setForecast] = useState<ForecastData | null>(null); //prognoza
+  const [loading, setLoading] = useState(true); //loading state
+  const [error, setError] = useState('');// error state
 
+  //Pobieranie danych pogodowych
   useEffect(() => {
     if (!city) return;
     setLoading(true);
@@ -48,7 +51,7 @@ export default function Details() {
       });
   }, [city, unit]);
 
-  // ✅ використали loading — warning зникне
+  //Ekran ładowania
   if (loading) {
     return (
       <div className="flex flex-col items-center pt-20 gap-4">
@@ -58,6 +61,7 @@ export default function Details() {
     );
   }
 
+  //Obsługa błędu
   if (error || !current || !forecast) {
     return (
       <div className="flex flex-col items-center pt-20 gap-4">
@@ -69,14 +73,17 @@ export default function Details() {
     );
   }
 
+  //Sprawdzenie, czy miasto jest ulubione
   const isFav = favorites.some((f) => f.id === current.id);
 
+  //Prognoza dzienna (12:00)
   const dailyForecast = forecast.list
     .filter((reading) => reading.dt_txt.includes('12:00:00'))
     .slice(0, 5);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
+      {/* Powrót */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center text-slate-400 hover:text-white transition-colors mb-4"
@@ -84,15 +91,23 @@ export default function Details() {
         <ArrowLeft size={16} className="mr-2" /> Back
       </button>
 
+      {/* Główna karta pogody */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 to-slate-900 p-8 p-12 text-white shadow-2xl border border-slate-700/50">
         <div className="absolute top-0 right-0 p-32 bg-indigo-500/20 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 flex flex-col flex-row justify-between items-center">
           <div className="text-center text-left">
             <div className="flex items-center gap-4 justify-center justify-start">
+              {/* Nazwa miasta */}
               <h1 className="text-4xl text-6xl font-bold tracking-tight">{current.name}</h1>
+
+              {/* Przycisk ulubionych */}
               <button
-                onClick={() => (isFav ? dispatch(removeFavorite(current.id)) : dispatch(addFavorite(current)))}
+                onClick={() =>
+                  isFav
+                    ? dispatch(removeFavorite(current.id))
+                    : dispatch(addFavorite(current))
+                }
                 className={`p-2 rounded-full bg-white/10 backdrop-blur-sm transition-all ${
                   isFav ? 'text-rose-500 bg-rose-500/20' : 'text-slate-300 hover:text-white'
                 }`}
@@ -101,26 +116,32 @@ export default function Details() {
               </button>
             </div>
 
-            <p className="text-indigo-200 text-lg mt-2 capitalize">{current.weather[0].description}</p>
+            {/* Opis pogody */}
+            <p className="text-indigo-200 text-lg mt-2 capitalize">
+              {current.weather[0].description}
+            </p>
 
+            {/* Temperatura */}
             <div className="text-7xl text-9xl font-bold mt-6 tracking-tighter">
               {displayTemp(current.main.temp, unit)}
             </div>
           </div>
 
+          {/* Ikona pogody */}
           <div className="mt-8 mt-0">
             <img
               src={`https://openweathermap.org/img/wn/${current.weather[0].icon}@4x.png`}
               alt="weather icon"
-              className="w-48 h-48 drop-shadow-2xl filter-none grayscale-0 saturate-100 contrast-100 mix-blend-normal opacity-100"
+              className="w-48 h-48 drop-shadow-2xl"
               onError={(e) => {
-                // ✅ fallback якщо @4x не віддався
+                // Fallback ikony
                 e.currentTarget.src = `https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`;
               }}
             />
           </div>
         </div>
 
+        {/* Statystyki pogodowe */}
         <div className="grid grid-cols-2 grid-cols-4 gap-4 mt-8 bg-white/5 rounded-2xl p-6 backdrop-blur-sm">
           <div className="flex flex-col items-center p-2">
             <Wind className="text-indigo-400 mb-2" />
@@ -148,6 +169,7 @@ export default function Details() {
         </div>
       </div>
 
+      {/* Prognoza 5-dniowa */}
       <div>
         <h3 className="text-xl font-semibold text-slate-200 mb-4 flex items-center gap-2">
           <Calendar size={20} className="text-indigo-500" /> 5-Day Forecast
@@ -159,19 +181,27 @@ export default function Details() {
               key={day.dt}
               className="bg-slate-800/50 border border-slate-700 p-4 rounded-xl flex flex-col items-center hover:bg-slate-800 transition-colors"
             >
-              <span className="text-slate-400 text-sm mb-2">{formatDateForForecast(day.dt)}</span>
+              {/* Data */}
+              <span className="text-slate-400 text-sm mb-2">
+                {formatDateForForecast(day.dt)}
+              </span>
 
+              {/* Ikona */}
               <img
                 src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
                 alt="icon"
                 className="w-12 h-12"
               />
 
+              {/* Temperatura */}
               <span className="text-xl font-bold text-white mt-2">
                 {displayTemp(day.main.temp, unit)}
               </span>
 
-              <span className="text-xs text-slate-500 mt-1 capitalize">{day.weather[0].main}</span>
+              {/* Opis */}
+              <span className="text-xs text-slate-500 mt-1 capitalize">
+                {day.weather[0].main}
+              </span>
             </div>
           ))}
         </div>
