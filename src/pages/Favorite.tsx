@@ -4,7 +4,7 @@ import CityCard from '../components/CityCard';
 import { HeartOff } from 'lucide-react';
 
 export default function Favorites() {
-  const favorites = useSelector((state: RootState) => state.favorites.list);
+  const favorites = useSelector((state: RootState) => state.favorites.list); //Pobranie listy ulubionych miast z globalnego stanu Redux
 
   if (favorites.length === 0) {
     return (
@@ -14,8 +14,8 @@ export default function Favorites() {
       </div>
     );
   }
-
-  return (
+ 
+  return ( //Główny kontener strony ulubionych
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white">Favorite Locations</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

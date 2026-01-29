@@ -7,23 +7,27 @@ import { addFavorite, removeFavorite } from '../store/favoritesSlice';
 import { type WeatherData } from '../types/weather';
 import { convertTemp } from '../utils/tempConverter'; 
 
+//Interfejs definiujący typ danych przekazywanych do komponentu CityCard
+//Zapewnia bezpieczeństwo typów dzięki TypeScript
 interface Props {
   data: WeatherData;
 }
 
-export default function CityCard({ data }: Props) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const unit = useSelector((state: RootState) => state.settings.unit);
-  const favorites = useSelector((state: RootState) => state.favorites.list);
-  const isFav = favorites.some(f => f.id === data.id);
+export default function CityCard({ data }: Props) { //Komponent reprezentujący kartę miasta z podstawowymi informacjami pogodowymi
+  const navigate = useNavigate(); //Hook do nawigacji między stronami (np. przejście do szczegółów miasta)
+  const dispatch = useDispatch(); //Hook do wysyłania akcji do Redux store
+  const unit = useSelector((state: RootState) => state.settings.unit); //Pobieranie aktualnej jednostki temperatury z Redux (Celsius, Fahrenheit, Kelvin)
+  const favorites = useSelector((state: RootState) => state.favorites.list); //Pobieranie listy ulubionych miast z Redux store
+  const isFav = favorites.some(f => f.id === data.id);//Sprawdzenie
 
+
+//Funkcja obsługująca dodawanie/usuwanie miasta z ulubionych stopPropagation zapobiega kliknięciu całej karty 
   const toggleFav = (e: React.MouseEvent) => {
     e.stopPropagation();
     isFav ? dispatch(removeFavorite(data.id)) : dispatch(addFavorite(data));
   };
 
-  return (
+  return ( //Kliknięcie całej karty przenosi użytkownika do strony szczegółów miasta
     <div 
       onClick={() => navigate(`/details/${data.name}`)}
       className="relative bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-indigo-500/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-indigo-500/10 group"

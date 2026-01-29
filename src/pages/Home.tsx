@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const SUGGESTED_CITIES = [
+const SUGGESTED_CITIES = [ //Lista sugerowanych miast (stała)
   "Warsaw",
   "Krakow",
   "Gdansk",
@@ -11,16 +11,16 @@ const SUGGESTED_CITIES = [
   "Poznan",
 ] as const;
 
-export default function Home() {
+export default function Home() { //Stan lokalny przechowujący aktualnie wpisaną nazwę miasta
   const [query, setQuery] = useState('');
-  const navigate = useNavigate();
+  const navigate = useNavigate(); //Hook do nawigacji między stronami aplikacji 
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) navigate(`/details/${query}`);
+    if (query.trim()) navigate(`/details/${query}`); //Przekierowanie do strony szczegółów danego miasta
   };
 
-  return (
+  return ( // Główny kontener strony Home — wyśrodkowanie zawartości + animacja wejścia
     <div className="grid place-items-center min-h-[70vh] animate-in fade-in duration-700">
       <div className="w-full max-w-2xl text-center">
         <div className="mb-8">

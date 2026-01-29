@@ -7,9 +7,9 @@ import Home from './pages/Home';
 import Details from './pages/Detail';
 import Favorites from './pages/Favorite';
 
-function App() {
-  return (
-    <Provider store={store}>
+function App() { //Odpowiada za konfigurację Redux\ Routera oraz główny układ stron
+  return ( //Provider udostępnia Redux store całej aplikacji
+    <Provider store={store}>  
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>

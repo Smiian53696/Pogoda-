@@ -10,7 +10,7 @@ export default function Layout() {
         : 'text-slate-300/80 hover:text-white hover:bg-white/10'
     }`;
 
-  return (
+  return ( //Główny kontener Layoutu
     <div className="min-h-screen text-slate-100 font-sans">
       {/* background */}
       <div className="fixed inset-0 -z-10">

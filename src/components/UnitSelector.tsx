@@ -2,13 +2,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { type RootState } from '../store';
 import { setUnit } from '../store/unitsSlice';
 import { type TemperatureUnit } from '../types/weather';
+// Komponent UnitSelector odpowiada za wybór jednostki temperatury:  Celsjusza (°C)  Fahrenheita (°F) Kelviny (K)
 
 export default function UnitSelector() {
   const dispatch = useDispatch();
   const currentUnit = useSelector((state: RootState) => state.settings.unit);
-  const units: TemperatureUnit[] = ['celsius', 'fahrenheit', 'kelvin'];
+  const units: TemperatureUnit[] = ['celsius', 'fahrenheit', 'kelvin']; //Lista dostępnych jednostek temperatury
 
-  return (
+  return ( //Kontener przycisków z efektem glassmorphism
     <div className="glass rounded-2xl p-1 flex">
       {units.map((u) => (
         <button
